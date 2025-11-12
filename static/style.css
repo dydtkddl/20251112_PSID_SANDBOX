@@ -1,0 +1,12 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+table a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+table a:hover {
+  text-decoration: underline;
+}

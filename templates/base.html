@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📂 FastAPI File Browser</title>
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="/">📁 File Browser</a>
+    </div>
+  </nav>
+
+  <div class="container py-3">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer class="text-center text-muted small py-3 mt-4">
+    <hr>
+    <div>Made with ❤️ FastAPI + Bootstrap</div>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
