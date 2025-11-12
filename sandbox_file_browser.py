@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-📂 FastAPI + Bootstrap5 + Jinja2 파일 브라우저
-─────────────────────────────────────────────
-✅ sandbox 루트 이하만 탐색 가능
-✅ 업로드 / 다운로드 / breadcrumb / 검색 / 정렬
-✅ ✅ 폴더 항상 위 + 이름순 정렬
-✅ 유형 열 항상 표시
-✅ ngrok-skip-browser-warning 헤더 자동 추가
+FastAPI + Bootstrap5 + Jinja2 파일 브라우저
 """
 import os
+import sys
 import logging
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from urllib.parse import quote, unquote
 from datetime import datetime
 
@@ -20,20 +15,19 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # ─────────────────────────────────────────────
-ROOT_DIR = Path(r"C:/Users/qhfkd/Desktop/20251109_Spherical_harmonic")
+ROOT_DIR = Path(r"C:\Users\KHU_PSID\Desktop\KHU_PSID").resolve()
 PORT = 8127
 
 logging.basicConfig(
     level=logging.INFO,
+    stream=sys.stdout,
+    encoding="utf-8",
     format="%(asctime)s | %(levelname)s | %(message)s",
-    handlers=[logging.FileHandler("browser.log"), logging.StreamHandler()],
 )
-
 app = FastAPI(title="Responsive File Browser")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# ✅ datetimeformat 필터 추가
 def datetimeformat(value):
     try:
         return datetime.fromtimestamp(value).strftime("%Y-%m-%d %H:%M")
@@ -41,17 +35,18 @@ def datetimeformat(value):
         return "-"
 templates.env.filters["datetimeformat"] = datetimeformat
 
-# ✅ ngrok 경고 제거
 @app.middleware("http")
 async def skip_ngrok_warning(request, call_next):
     response: Response = await call_next(request)
     response.headers["ngrok-skip-browser-warning"] = "true"
     return response
 
-# ✅ 안전한 경로 조합
+# Windows 경로 안정형 safe_join
 def safe_join(base: Path, target: str) -> Path:
-    target_path = (base / unquote(target)).resolve()
-    if not str(target_path).startswith(str(base.resolve())):
+    base = base.resolve()
+    target_path = (base / unquote(target)).resolve(strict=False)
+    # Windows 절대경로 문자열 비교
+    if not str(PureWindowsPath(target_path)).startswith(str(PureWindowsPath(base))):
         raise PermissionError("상위 경로 접근 차단됨")
     return target_path
 
@@ -64,10 +59,12 @@ async def home():
 async def browse(request: Request, path: str = ""):
     try:
         abs_path = safe_join(ROOT_DIR, path)
-        if not abs_path.exists():
-            return HTMLResponse(f"<h3>❌ 경로 없음: {path}</h3>", status_code=404)
+        logging.info(f"📁 탐색 중: {abs_path}")
 
-        # ✅ 폴더가 항상 위로 오게 정렬
+        if not abs_path.exists():
+            logging.warning(f"경로 없음: {abs_path}")
+            return HTMLResponse(f"<h3>경로 없음: {abs_path}</h3>", status_code=404)
+
         entries = []
         for item in sorted(abs_path.iterdir(), key=lambda x: (not x.is_dir(), x.name.lower())):
             rel = os.path.relpath(item, ROOT_DIR)
@@ -95,20 +92,18 @@ async def browse(request: Request, path: str = ""):
         )
 
     except PermissionError:
-        return HTMLResponse("<h3>🚫 접근 불가 경로</h3>", status_code=403)
+        return HTMLResponse("<h3>접근 불가 경로</h3>", status_code=403)
 
-# ─────────────────────────────────────────────
 @app.get("/download")
 async def download(path: str):
     try:
         file_path = safe_join(ROOT_DIR, path)
         if not file_path.is_file():
-            return HTMLResponse("<h3>❌ 파일 없음</h3>", status_code=404)
+            return HTMLResponse("<h3>파일 없음</h3>", status_code=404)
         return FileResponse(file_path, filename=file_path.name)
     except PermissionError:
-        return HTMLResponse("<h3>🚫 상위 경로 접근 불가</h3>", status_code=403)
+        return HTMLResponse("<h3>상위 경로 접근 불가</h3>", status_code=403)
 
-# ─────────────────────────────────────────────
 @app.post("/upload")
 async def upload(path: str = "", file: UploadFile = File(...)):
     try:
@@ -121,8 +116,7 @@ async def upload(path: str = "", file: UploadFile = File(...)):
     except PermissionError:
         return HTMLResponse("<h3>🚫 업로드 불가</h3>", status_code=403)
 
-# ─────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
-    logging.info(f"🚀 Running: http://0.0.0.0:{PORT}")
+    logging.info(f"🚀 Running: http://127.0.0.1:{PORT}")
     uvicorn.run(app, host="0.0.0.0", port=PORT)
