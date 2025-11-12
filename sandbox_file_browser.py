@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-FastAPI + Bootstrap5 + Jinja2 파일 브라우저
-"""
 import os
 import sys
 import logging
@@ -15,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # ─────────────────────────────────────────────
-ROOT_DIR = Path(r"C:\Users\KHU_PSID\Desktop\KHU_PSID").resolve()
+ROOT_DIR = Path("C:/Users/KHU_PSID/Desktop/KHU_PSID").resolve()
 PORT = 8127
 
 logging.basicConfig(
@@ -41,7 +38,7 @@ async def skip_ngrok_warning(request, call_next):
     response.headers["ngrok-skip-browser-warning"] = "true"
     return response
 
-# Windows 경로 안정형 safe_join
+# ✅ Windows 경로 안정형 safe_join
 def safe_join(base: Path, target: str) -> Path:
     base = base.resolve()
     target_path = (base / unquote(target)).resolve(strict=False)
@@ -62,8 +59,8 @@ async def browse(request: Request, path: str = ""):
         logging.info(f"📁 탐색 중: {abs_path}")
 
         if not abs_path.exists():
-            logging.warning(f"경로 없음: {abs_path}")
-            return HTMLResponse(f"<h3>경로 없음: {abs_path}</h3>", status_code=404)
+            logging.warning(f"❌ 경로 없음: {abs_path}")
+            return HTMLResponse(f"<h3>❌ 경로 없음: {abs_path}</h3>", status_code=404)
 
         entries = []
         for item in sorted(abs_path.iterdir(), key=lambda x: (not x.is_dir(), x.name.lower())):
@@ -92,17 +89,17 @@ async def browse(request: Request, path: str = ""):
         )
 
     except PermissionError:
-        return HTMLResponse("<h3>접근 불가 경로</h3>", status_code=403)
+        return HTMLResponse("<h3>🚫 접근 불가 경로</h3>", status_code=403)
 
 @app.get("/download")
 async def download(path: str):
     try:
         file_path = safe_join(ROOT_DIR, path)
         if not file_path.is_file():
-            return HTMLResponse("<h3>파일 없음</h3>", status_code=404)
+            return HTMLResponse("<h3>❌ 파일 없음</h3>", status_code=404)
         return FileResponse(file_path, filename=file_path.name)
     except PermissionError:
-        return HTMLResponse("<h3>상위 경로 접근 불가</h3>", status_code=403)
+        return HTMLResponse("<h3>🚫 상위 경로 접근 불가</h3>", status_code=403)
 
 @app.post("/upload")
 async def upload(path: str = "", file: UploadFile = File(...)):
