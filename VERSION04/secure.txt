@@ -1,0 +1,7 @@
+HTTPS 환경 (Cloudflare)에서 자동 쿠키 암호화 지원됨
+
+httponly=True 로 XSS 보호
+
+회원가입 없음 → 미등록 유저 접근 완벽 차단
+
+Cloudflare Access 규칙과도 호환 가능 (이중 인증 가능

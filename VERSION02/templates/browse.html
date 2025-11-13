@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ✅ Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb flex-wrap psid-breadcrumb">
+    <li class="breadcrumb-item"><a href="/browse">🏠 Root</a></li>
+    {% set cumulative = "" %}
+    {% for part in breadcrumb %}
+      {% set cumulative = cumulative + ("/" if cumulative else "") + part %}
+      {% if not loop.last %}
+        <li class="breadcrumb-item"><a href="/browse?path={{ cumulative }}">{{ part }}</a></li>
+      {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{{ part }}</li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</nav>
+
+<!-- ✅ Path + Search -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+  <div class="path-display text-truncate">{{ abs_path }}</div>
+  <div class="search-box mt-2 mt-sm-0">
+    <input id="searchBox" type="search" class="form-control form-control-sm" placeholder="🔍 검색...">
+  </div>
+</div>
+
+<!-- ✅ View toggle -->
+<div class="d-flex justify-content-end mb-2">
+  <button class="btn btn-sm btn-outline-secondary me-1" onclick="setView('list')">📋</button>
+  <button class="btn btn-sm btn-outline-secondary" onclick="setView('grid')">🗂️</button>
+</div>
+
+<!-- ✅ File table -->
+<div id="fileView" class="table-responsive psid-table">
+  <table id="fileTable" class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>이름</th>
+        <th>유형</th>
+        <th>크기</th>
+        <th>수정일</th>
+        <th>동작</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in entries %}
+      <tr>
+        <td>
+          {% if e.is_dir %}
+            📁 <a href="/browse?path={{ e.path }}" class="psid-link">{{ e.name }}</a>
+          {% else %}
+            📄 {{ e.name }}
+          {% endif %}
+        </td>
+        <td>{{ '폴더' if e.is_dir else '파일' }}</td>
+        <td>{{ e.size }}</td>
+        <td>{{ e.mtime | int | datetimeformat }}</td>
+        <td>
+          {% if not e.is_dir %}
+          <a class="btn btn-sm btn-outline-primary" href="/download?path={{ e.path }}">⬇</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ Upload -->
+<hr>
+<form action="/upload?path={{ path }}" method="post" enctype="multipart/form-data" class="upload-box mt-3 p-3 rounded">
+  <div class="input-group">
+    <input type="file" name="file" class="form-control" required>
+    <button class="btn btn-primary">📤 업로드</button>
+  </div>
+</form>
+
+{% endblock %}

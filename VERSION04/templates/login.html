@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>로그인 | PSID Dropbox</title>
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #002b5c 0%, #ffffff 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+    }
+    .login-box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 2rem;
+      width: 90%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box text-center">
+    <h4 class="mb-3 fw-bold text-primary">🔒 PSID Dropbox Login</h4>
+    {% if error %}
+      <div class="alert alert-danger py-1 small">{{ error }}</div>
+    {% endif %}
+    <form action="/login" method="post">
+      <div class="mb-3">
+        <input name="username" class="form-control" placeholder="아이디" required>
+      </div>
+      <div class="mb-3">
+        <input name="password" type="password" class="form-control" placeholder="비밀번호" required>
+      </div>
+      <button class="btn btn-primary w-100">로그인</button>
+    </form>
+  </div>
+</body>
+</html>

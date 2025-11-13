@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PSID Dropbox (KHU)</title>
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="/static/KHULOGO.svg">
+</head>
+<body class="bg-body">
+  <!-- ✅ Navbar -->
+  <nav class="navbar navbar-expand-lg shadow-sm sticky-top psid-navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand d-flex align-items-center fw-bold text-dark" href="/">
+        <img src="/static/logo_all.jpg" alt="KHU Logo" class="me-2 rounded-circle" height="38">
+        <span>📁 PSID Dropbox</span>
+      </a>
+      <button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="toggleDarkMode()">🌓</button>
+    </div>
+  </nav>
+
+  <!-- ✅ Main container -->
+  <main class="container-fluid py-4 px-3 px-md-5">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ✅ Footer -->
+  <footer class="text-center text-muted small py-3 mt-4 border-top">
+    <div>Made with ❤️ by <b>Yongsang An</b></div>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
