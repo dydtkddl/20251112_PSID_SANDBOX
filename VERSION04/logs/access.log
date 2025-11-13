@@ -1,0 +1,5 @@
+2025-11-13 11:19:22,862 | INFO | ✅ Logging initialized (hourly rotation)
+2025-11-13 11:19:22,935 | INFO | 🚀 Running on http://127.0.0.1:8127
+2025-11-13 11:21:25,603 | INFO | ✅ Logging initialized (hourly rotation)
+2025-11-13 11:21:25,740 | INFO | 🚀 Running on http://127.0.0.1:8127
+2025-11-13 11:21:33,422 | INFO | ⬇️ DOWNLOAD | user=jetznet | ip=127.0.0.1 | file=engine.py | size=6092 bytes | took=1.00ms
